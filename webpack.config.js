@@ -1,5 +1,6 @@
 const nodeExternals = require("webpack-node-externals");
 const path = require("path");
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 
 const js = {
   test: /\.jsx?/,
@@ -45,6 +46,9 @@ const clientConfig = {
     path: path.resolve(__dirname, "dist/client"),
     filename: "[name].bundle.js",
   },
+  // plugins: [
+  //   new BundleAnalyzerPlugin()
+  // ]
   // optimization: {
   //   splitChunks: {
   //     chunks: 'all',

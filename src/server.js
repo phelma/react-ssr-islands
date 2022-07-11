@@ -3,10 +3,15 @@ import path from "path";
 import React from "react";
 import ReactDOMServer from "react-dom/server";
 import App from "./App.jsx";
+import {
+  IslandStateContextProvider,
+  ServerIslandStateContext,
+  ServerIslandStateContextProvider,
+} from "./IslandStateContext.jsx";
 
 const PORT = 3000;
 
-function renderHtml({title, description, initialData, component}){
+function renderHtml({ title, description, initialData, component }) {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -26,10 +31,11 @@ function renderHtml({title, description, initialData, component}){
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
 
-        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
 
         /* Background color to go to page edge. */
-        margin: 0;
+
       }
 
       body > * {
@@ -51,7 +57,7 @@ function renderHtml({title, description, initialData, component}){
     <div id="root">${component}</div>
   </body>
 </html>
-`
+`;
 }
 
 /**
@@ -63,11 +69,17 @@ function renderHtml({title, description, initialData, component}){
 function page(initialData) {
   const { username, title, description } = initialData;
 
+  const islandState = {};
+
   const component = ReactDOMServer.renderToString(
-    <App username={username} title={title} description={description} />
+    <IslandStateContextProvider islandState={islandState}>
+      <App username={username} title={title} description={description} />
+    </IslandStateContextProvider>
   );
 
-  return renderHtml({title, description, initialData, component});
+  initialData.islandState = islandState;
+
+  return renderHtml({ title, description, initialData, component });
 }
 
 const app = express();
@@ -75,7 +87,7 @@ const app = express();
 app.get("/", (_req, res) => {
   const initialData = {
     username: "developer",
-    title: "React SSR Quickstart",
+    title: "React Island Spike",
     description:
       "Starter template for server-side and client-side rendering of a React app",
   };
@@ -84,10 +96,10 @@ app.get("/", (_req, res) => {
   res.send(html);
 });
 
-const publicDir = path.resolve(__dirname, '..', "client");
+const publicDir = path.resolve(__dirname, "..", "client");
 console.log(`Serving static files from ${publicDir}`);
 app.use("/static", express.static(publicDir));
 
 app.listen(PORT);
 
-console.log(`LISENING ON ${PORT}`)
+console.log(`LISENING ON ${PORT}`);

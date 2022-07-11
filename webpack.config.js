@@ -26,24 +26,30 @@ const serverConfig = {
     rules: [js],
   },
   output: {
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dist/server"),
     filename: "[name]",
   },
 };
 
 const clientConfig = {
+  stats: 'normal',
   mode: "development",
   target: "web",
   entry: {
-    "main.js": path.resolve(__dirname, "src/client.jsx"),
+    "main": path.resolve(__dirname, "src/client.jsx"),
   },
   module: {
     rules: [js],
   },
   output: {
-    path: path.resolve(__dirname, "dist/public"),
-    filename: "[name]",
+    path: path.resolve(__dirname, "dist/client"),
+    filename: "[name].bundle.js",
   },
+  // optimization: {
+  //   splitChunks: {
+  //     chunks: 'all',
+  //   }
+  // },
 };
 
 module.exports = [serverConfig, clientConfig];
